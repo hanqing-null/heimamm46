@@ -22,11 +22,26 @@
         </el-form-item>
         <!-- 验证码 -->
         <el-form-item>
-          <el-input placeholder="请输入验证码" prefix-icon="el-icon-key" v-model="loginForm.loginCode"></el-input>
+          <el-row>
+            <el-col :span="17">
+              <el-input
+                placeholder="请输入验证码"
+                prefix-icon="el-icon-key"
+                v-model="loginForm.loginCode"
+              ></el-input>
+            </el-col>
+            <el-col :span="7">
+              <img class="login-code" src="../../assets/logo.png" alt />
+            </el-col>
+          </el-row>
         </el-form-item>
         <!-- 用户协议 -->
         <el-form-item>
-          <el-checkbox v-model="loginForm.isCecked">是否同意用户协议</el-checkbox>
+          <el-checkbox v-model="loginForm.isCecked">
+            我已阅读并同意
+            <el-link type="primary">用户协议</el-link>和
+            <el-link type="primary">隐私条款</el-link>
+          </el-checkbox>
         </el-form-item>
 
         <el-form-item>
@@ -82,7 +97,7 @@ export default {
     height: 550px;
     box-sizing: border-box;
     padding-right: 41px;
-
+    // 左侧盒子顶部
     .title-box {
       display: flex;
       align-items: center;
@@ -105,6 +120,25 @@ export default {
         margin-left: 12px;
       }
     }
+  }
+
+  // 验证码图片
+  .login-code {
+    width: 100%;
+    height: 48.8px;
+  }
+  // 协议样式
+  .el-checkbox {
+    display: flex;
+    .el-checkbox__label {
+      display: flex;
+    }
+  }
+
+  .el-button--primary {
+    width: 100%;
+    margin-bottom: 20px;
+    margin-left: 0px;
   }
 }
 </style>
