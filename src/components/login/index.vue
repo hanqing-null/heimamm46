@@ -5,21 +5,58 @@
     <div class="left-box">
       <!-- 顶部的标题 -->
       <div class="title-box">
-        <img src="../../assets/login_logo.png" alt="" class="logo">
+        <img src="../../assets/login_logo.png" alt class="logo" />
         <span class="title">黑马面面</span>
         <span class="line"></span>
         <span class="sub-title">用户登录</span>
       </div>
+      <!-- 表单 -->
+      <el-form ref="form" :model="loginForm" label-width="43px">
+        <!-- 手机号 -->
+        <el-form-item>
+          <el-input placeholder="请输入手机号" prefix-icon="el-icon-user" v-model="loginForm.phone"></el-input>
+        </el-form-item>
+        <!-- 密码 -->
+        <el-form-item>
+          <el-input placeholder="请输入密码" prefix-icon="el-icon-lock" v-model="loginForm.passwrod"></el-input>
+        </el-form-item>
+        <!-- 验证码 -->
+        <el-form-item>
+          <el-input placeholder="请输入验证码" prefix-icon="el-icon-key" v-model="loginForm.loginCode"></el-input>
+        </el-form-item>
+        <!-- 用户协议 -->
+        <el-form-item>
+          <el-checkbox v-model="loginForm.isCecked">是否同意用户协议</el-checkbox>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary">登陆</el-button>
+          <el-button>注册</el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <!-- 右边的图片 -->
-    <img src="../../assets/login_banner_ele (1).png" alt="" />
+    <img src="../../assets/login_banner_ele (1).png" alt />
   </div>
 </template>
 
 <script>
 export default {
   // 组件的名字
-  name: 'login'
+  data() {
+    return {
+      loginForm: {
+        // 手机号
+        phone: "",
+        // 密码
+        passwrod: "",
+        // 验证码
+        loginCode: "",
+        // 用户协议
+        isChecke: false
+      }
+    };
+  }
 };
 </script>
 
@@ -37,29 +74,33 @@ export default {
   align-items: center;
   /* 左右均分 */
   justify-content: space-around;
-  /* justify-content: space-between; */
+
   // 左侧盒子
   .left-box {
     width: 478px;
     background-color: #f5f5f5;
     height: 550px;
-    .title-box{
+    box-sizing: border-box;
+    padding-right: 41px;
+
+    .title-box {
       display: flex;
       align-items: center;
       margin-top: 44px;
       margin-left: 48px;
-      .logo{}
-      .title{
+      margin-bottom: 27px;
+
+      .title {
         font-size: 24px;
         margin-left: 16px;
         margin-right: 14px;
       }
-      .line{
+      .line {
         width: 1px;
         height: 28px;
-        background-color: #C7C7C7;
+        background-color: #c7c7c7;
       }
-      .sub-title{
+      .sub-title {
         font-size: 21px;
         margin-left: 12px;
       }
