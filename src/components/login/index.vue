@@ -11,17 +11,17 @@
         <span class="sub-title">用户登录</span>
       </div>
       <!-- 表单 -->
-      <el-form ref="form" :model="loginForm" label-width="43px">
+      <el-form :rules="rules" ref="loginForm" :model="loginForm" label-width="43px">
         <!-- 手机号 -->
         <el-form-item>
           <el-input placeholder="请输入手机号" prefix-icon="el-icon-user" v-model="loginForm.phone"></el-input>
         </el-form-item>
         <!-- 密码 -->
-        <el-form-item>
-          <el-input placeholder="请输入密码" prefix-icon="el-icon-lock" v-model="loginForm.passwrod"></el-input>
+        <el-form-item prop="password">
+          <el-input placeholder="请输入密码" prefix-icon="el-icon-lock" v-model="loginForm.password"></el-input>
         </el-form-item>
         <!-- 验证码 -->
-        <el-form-item>
+        <el-form-item prop="loginCode">
           <el-row>
             <el-col :span="17">
               <el-input
@@ -45,8 +45,8 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary">登陆</el-button>
-          <el-button>注册</el-button>
+          <el-button type="primary" @click="submitForm('loginForm')">登陆</el-button>
+          <el-button type="primary">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -60,6 +60,7 @@ export default {
   // 组件的名字
   data() {
     return {
+      // 表单属性
       loginForm: {
         // 手机号
         phone: "",
@@ -69,6 +70,18 @@ export default {
         loginCode: "",
         // 用户协议
         isChecke: false
+      },
+
+      //  效验规格
+      rules: {
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 6, max: 12, message: "密码长度为6-12位", trigger: "blur" }
+        ],
+        loginCode: [
+          { required: true, message: "验证码不能为空", trigger: "blur" },
+          { min: 4, max: 4, message: "验证码长度为4位", trigger: "blur" }
+        ]
       }
     };
   }
@@ -120,25 +133,32 @@ export default {
         margin-left: 12px;
       }
     }
-  }
+    // 表单
+    .el-form {
+      // 验证码图片
+      .login-code {
+        width: 100%;
+        height: 48.8px;
+      }
+      // 协议样式
+      .el-checkbox {
+        display: flex;
+        .el-checkbox__label {
+          display: flex;
+        }
+      }
 
-  // 验证码图片
-  .login-code {
-    width: 100%;
-    height: 48.8px;
-  }
-  // 协议样式
-  .el-checkbox {
-    display: flex;
-    .el-checkbox__label {
-      display: flex;
+      .el-row .el-col-7 {
+        height: 48.8px;
+      }
+
+      // 按钮
+      .el-form-item__content .el-button--primary {
+        width: 100%;
+        margin-bottom: 20px;
+        margin-left: 0px;
+      }
     }
-  }
-
-  .el-button--primary {
-    width: 100%;
-    margin-bottom: 20px;
-    margin-left: 0px;
   }
 }
 </style>
