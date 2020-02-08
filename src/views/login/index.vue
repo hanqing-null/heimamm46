@@ -46,18 +46,28 @@
 
         <el-form-item>
           <el-button type="primary" @click="submitForm('loginForm')">登陆</el-button>
-          <el-button type="primary">注册</el-button>
+          <el-button type="primary" @click="showRegister">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
     <!-- 右边的图片 -->
     <img src="../../assets/login_banner_ele (1).png" alt />
+    <!-- 弹出框 -->
+    <registerDialog ref="registerDialog"></registerDialog>
+
   </div>
 </template>
 
 <script>
+// 导入 注册对话框组件
+import registerDialog from './components/registerDialog';
 export default {
   // 组件的名字
+  name: "login",
+  // 注册组件
+  components: {
+    registerDialog
+  },
   data() {
     return {
       // 表单属性
@@ -84,6 +94,25 @@ export default {
         ]
       }
     };
+  },
+  methods: {
+    // 登录事件
+    submitForm(formName) {
+      // window.console.log(this.$refs[formName].validate)
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$message.success("验证成功");
+        } else {
+          this.$message.error("验证失败");
+          return false;
+        }
+      });
+    },
+    // 注册事件
+    showRegister() {
+      window.console.log(this.$refs.registerDialog)
+      this.$refs.registerDialog.dialogFormVisible = true;
+    }
   }
 };
 </script>

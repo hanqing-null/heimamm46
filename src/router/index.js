@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import login from '../components/login'
+import login from '../views/login'
 // 注册路由
 Vue.use(VueRouter)
 const router = new VueRouter({
