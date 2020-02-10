@@ -54,13 +54,15 @@
     <img src="../../assets/login_banner_ele (1).png" alt />
     <!-- 弹出框 -->
     <registerDialog ref="registerDialog"></registerDialog>
-
   </div>
 </template>
 
 <script>
 // 导入 注册对话框组件
-import registerDialog from './components/registerDialog';
+import registerDialog from "./components/registerDialog";
+
+window.console.log(process.env.VUE_APP_URL);
+
 export default {
   // 组件的名字
   name: "login",
@@ -110,7 +112,7 @@ export default {
     },
     // 注册事件
     showRegister() {
-      window.console.log(this.$refs.registerDialog)
+      window.console.log(this.$refs.registerDialog);
       this.$refs.registerDialog.dialogFormVisible = true;
     }
   }
