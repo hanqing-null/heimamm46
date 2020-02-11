@@ -1,7 +1,13 @@
 <template>
-  <el-dialog class="register-dialog" width="603px" center title="用户注册" :visible.sync="dialogFormVisible">
+  <el-dialog
+    class="register-dialog"
+    width="603px"
+    center
+    title="用户注册"
+    :visible.sync="dialogFormVisible"
+  >
     <el-form status-icon :model="form" :rules="rules" ref="registerForm">
-      <el-form-item label="头像">
+      <el-form-item label="头像" prop="avatar">
         <el-upload
           class="avatar-uploader"
           :action="uploadUrl"
@@ -35,27 +41,28 @@
           </el-col>
           <el-col :span="7" :offset="1" class="register-box">
             <!-- 图片验证码 -->
-            <img @click="changeCode" class="register-code" :src="codeURL" alt="" />
+            <img @click="changeCode" class="register-code" :src="codeURL" alt />
           </el-col>
         </el-row>
       </el-form-item>
       <el-form-item label="验证码" :label-width="formLabelWidth">
         <el-row>
           <el-col :span="16">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
+            <el-input v-model="form.rcode" autocomplete="off"></el-input>
           </el-col>
           <el-col :span="7" :offset="1">
             <!-- 点击获取 短信验证码 -->
-            <el-button :disabled="delay != 0" @click="getSMS">
-              {{ delay == 0 ? '点击获取验证码' : `还有${delay}秒继续获取` }}
-            </el-button>
+            <el-button
+              :disabled="delay != 0"
+              @click="getSMS"
+            >{{ delay == 0 ? '点击获取验证码' : `还有${delay}秒继续获取` }}</el-button>
           </el-col>
         </el-row>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      <el-button type="primary" @click="submitForm('registerForm')">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -65,7 +72,7 @@
 // import axios from 'axios';
 
 // 导入 接口
-import { sendsms } from '../../../api/register.js';
+import { sendsms, register } from "../../../api/register.js";
 
 // 定义校验函数 - 邮箱
 const checkEmail = (rule, value, callback) => {
@@ -76,7 +83,7 @@ const checkEmail = (rule, value, callback) => {
   if (reg.test(value) == true) {
     callback();
   } else {
-    callback(new Error('邮箱的格式不对哦'));
+    callback(new Error("邮箱的格式不对哦"));
   }
 };
 // 定义校验函数 - 手机
@@ -88,7 +95,7 @@ const checkPhone = (rule, value, callback) => {
   if (reg.test(value) == true) {
     callback();
   } else {
-    callback(new Error('手机的格式不对哦'));
+    callback(new Error("手机的格式不对哦"));
   }
 };
 
@@ -100,70 +107,134 @@ export default {
       // 表单数据
       form: {
         // 昵称
-        username: '',
+        username: "",
         // 密码
-        password: '',
+        password: "",
         // 手机
-        phone: '',
+        phone: "",
         // 邮箱
-        email: '',
+        email: "",
         // 图片验证码
-        code: ''
+        code: "",
+        // 用户的头像地址数据
+        avatar: "",
+        // 短信验证码
+        rcode: ""
       },
       // 校验规则
       rules: {
+        avatar: [
+          { required: true, message: "用户头像不能为空", trigger: "blur" }
+        ],
         username: [
-          { required: true, message: '用户名不能为空', trigger: 'blur' },
-          { min: 6, max: 12, message: '用户名长度为 6 到 12 位', trigger: 'change' }
+          { required: true, message: "用户名不能为空", trigger: "blur" },
+          {
+            min: 6,
+            max: 12,
+            message: "用户名长度为 6 到 12 位",
+            trigger: "change"
+          }
         ],
         password: [
-          { required: true, message: '密码不能为空', trigger: 'blur' },
-          { min: 6, max: 12, message: '密码长度为 6 到 12 位', trigger: 'change' }
+          { required: true, message: "密码不能为空", trigger: "blur" },
+          {
+            min: 6,
+            max: 12,
+            message: "密码长度为 6 到 12 位",
+            trigger: "change"
+          }
         ],
         phone: [
-          { required: true, message: '手机不能为空', trigger: 'blur' },
-          { validator: checkPhone, trigger: 'blur' }
+          { required: true, message: "手机不能为空", trigger: "blur" },
+          { validator: checkPhone, trigger: "blur" }
         ],
         email: [
-          { required: true, message: '邮箱不能为空', trigger: 'blur' },
-          { validator: checkEmail, trigger: 'blur' }
+          { required: true, message: "邮箱不能为空", trigger: "blur" },
+          { validator: checkEmail, trigger: "blur" }
         ]
       },
       // 左侧的文本宽度
-      formLabelWidth: '62px',
+      formLabelWidth: "62px",
       // 验证码图片地址
-      codeURL: process.env.VUE_APP_URL + '/captcha?type=sendsms',
+      codeURL: process.env.VUE_APP_URL + "/captcha?type=sendsms",
       // 倒计时时间
       delay: 0,
       // 本地图片预览地址
-      imageUrl: '',
+      imageUrl: "",
       // 头像上传的接口地址
-      uploadUrl: process.env.VUE_APP_URL + '/uploads'
+      uploadUrl: process.env.VUE_APP_URL + "/uploads"
     };
   },
   // 方法
   methods: {
+    // 表单提交方式
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          register({
+            username: this.form.username,
+            password: this.form.password,
+            phone: this.form.phone,
+            email: this.form.email,
+            avatar: this.form.avatar,
+            rcode: this.form.rcode
+          }).then(res => {
+            window.console.log("进来了");
+            if (res.data.code == 200) {
+              this.$message.success("注册成功");
+              this.dialogFormVisible = false;
+            } else if (res.data.code == 201) {
+              window.console.log(res);
+              this.$message.error(res.data.message);
+              // 清空表单
+              this.$refs[formName].resetFields();
+              // 图片清空
+              this.imageUrl = "";
+            }
+          });
+        } else {
+          this.$message.error("验证失败");
+          return false;
+        }
+      });
+    },
+
     // 上传成功
     handleAvatarSuccess(res, file) {
       window.console.log(res);
       // URL.createObjectURL 生成的是本地的临时路径，刷新就没用了
       this.imageUrl = URL.createObjectURL(file.raw);
+      this.form.avatar = res.data.file_path;
+      this.$refs.registerForm.validateField("avatar");
     },
     // 上传之前
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg' || 'image/png';
+      const isJPG = file.type === "image/jpeg" || "image/png" || "image/gif";
       // 1024*1024 1mb
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
+        this.$message.error("上传头像图片只能是 JPG 格式!");
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
+        this.$message.error("上传头像图片大小不能超过 2MB!");
       }
       return isJPG && isLt2M;
     },
+
     // 获取短信验证码
     getSMS() {
+      const reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+
+      //手机格式效验
+      if (reg.test(this.form.phone) != true) {
+        return this.$message.error("手机格式不正确,请重新输入");
+      }
+
+      // 图片验证码
+      if (this.form.code.length != 4) {
+        return this.$message.error("图片验证码长度不正确");
+      }
+
       // 如果为0开启倒计时
       if (this.delay == 0) {
         this.delay = 60;
@@ -192,13 +263,14 @@ export default {
         }).then(res => {
           // window.console.log(res)
           if (res.data.code === 200) {
-            this.$message.success('验证码获取成功:' + res.data.data.captcha);
+            this.$message.success("验证码获取成功:" + res.data.data.captcha);
           } else if (res.data.code === 0) {
             this.$message.error(res.data.message);
           }
         });
       }
     },
+
     // 重新生成验证码
     changeCode() {
       // 随机数
@@ -206,7 +278,8 @@ export default {
       // // 时间戳 用的更为频繁
       // this.codeURL = process.env.VUE_APP_URL+"/captcha?type=sendsms&"+Date.now()
       // 如果要更为规范 t= 或者其他的 键值都可以 t是time的缩写
-      this.codeURL = process.env.VUE_APP_URL + '/captcha?type=sendsms&t=' + Date.now();
+      this.codeURL =
+        process.env.VUE_APP_URL + "/captcha?type=sendsms&t=" + Date.now();
     }
   }
 };
